@@ -3,8 +3,8 @@ import { Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
 import { LogginService } from '../logging.service';
 import { Ingredient } from '../shared/ingredient.model';
-import { StartEdit } from './store/shopping-list.actions';
 import * as fromApp from '../store/app.reducer';
+import { startEdit } from './store/shopping-list.actions';
 
 @Component({
   selector: 'app-shopping-list',
@@ -23,22 +23,12 @@ export class ShoppingListComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.ingredients = this.store.select('shoppingList');
 
-    // this.ingredients = this.slService.getIngredients();
-    // this.subscription = this.slService.ingredientsChanged.subscribe(
-    //   (ingredients: Ingredient[]) => {
-    //     this.ingredients = ingredients;
-    //   }
-    // );
-
     this.logginService.printLog('Hello from shopping list component ');
   }
 
   onEditItem(index: number) {
-    // this.slService.startedEditing.next(index);
-    this.store.dispatch(new StartEdit(index));
+    this.store.dispatch(startEdit({ index }));
   }
 
-  ngOnDestroy(): void {
-    // this.subscription.unsubscribe();
-  }
+  ngOnDestroy(): void {}
 }

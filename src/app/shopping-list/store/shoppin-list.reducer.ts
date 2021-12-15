@@ -1,12 +1,12 @@
+import { Action, createReducer, on } from '@ngrx/store';
 import { Ingredient } from '../../shared/ingredient.model';
 import {
-  ADD_INGREDIENT,
-  ADD_INGREDIENTS,
-  DELETE_INGREDIENT,
-  ShoppingListActions,
-  START_EDIT,
-  STOP_EDIT,
-  UPDATE_INGREDIENT,
+  addIngredient,
+  addIngredients,
+  updateIngredient,
+  deleteIngredient,
+  startEdit,
+  stopEdit,
 } from './shopping-list.actions';
 
 export interface State {
@@ -24,60 +24,52 @@ const initialState: State = {
   editedIngredientIndex: -1,
 };
 
-export function shoppingListReducer(
-  state: State = initialState,
-  action: ShoppingListActions
-) {
-  switch (action.type) {
-    case ADD_INGREDIENT:
-      //state.ingredients.push(); //nerver
-      return {
-        ...state, //good practice always put this
-        ingredients: [...state.ingredients, action.payload],
-      };
-    case ADD_INGREDIENTS:
-      return {
-        ...state,
-        ingredients: [...state.ingredients, ...action.payload],
-      };
-    case UPDATE_INGREDIENT:
-      const ingredient = state.ingredients[state.editedIngredientIndex];
-      const updatedIngredient = {
-        ...ingredient,
-        ...action.payload,
-      };
-      const updatedIngredients = [...state.ingredients];
+const _shoppingListReducer = createReducer(
+  initialState,
 
-      updatedIngredients[state.editedIngredientIndex] = updatedIngredient;
+  on(addIngredient, (state, action) => ({
+    ...state,
+    ingredients: state.ingredients.concat(action.ingredient),
+  })),
 
-      return {
-        ...state,
-        ingredients: updatedIngredients,
-        editedIngredientIndex: -1,
-        editedIngredient: null,
-      };
-    case DELETE_INGREDIENT:
-      return {
-        ...state,
-        ingredients: state.ingredients.filter((ig, igIndex) => {
-          return igIndex !== state.editedIngredientIndex;
-        }),
+  on(addIngredients, (state, action) => ({
+    ...state,
+    ingredients: state.ingredients.concat(...action.ingredients),
+  })),
 
-        editedIngredientIndex: -1,
-        editedIngredient: null,
-      };
+  on(updateIngredient, (state, action) => ({
+    ...state,
+    editedIngredientIndex: -1,
+    ingredients: state.ingredients.map((ingredient, index) =>
+      index === state.editedIngredientIndex
+        ? { ...action.ingredient }
+        : ingredient
+    ),
+    editedIngredient: null,
+  })),
 
-    case START_EDIT:
-      return {
-        ...state,
-        editedIngredientIndex: action.payload,
-        editedIngredient: { ...state.ingredients[action.payload] },
-      };
+  on(deleteIngredient, (state) => ({
+    ...state,
+    editedIngredientIndex: -1,
+    ingredients: state.ingredients.filter(
+      (_, index) => index !== state.editedIngredientIndex
+    ),
+    editedIngredient: null,
+  })),
 
-    case STOP_EDIT:
-      return { ...state, editedIngredientIndex: -1, editedIngredient: null };
+  on(startEdit, (state, action) => ({
+    ...state,
+    editedIngredientIndex: action.index,
+    editedIngredient: { ...state.ingredients[action.index] },
+  })),
 
-    default:
-      return state;
-  }
+  on(stopEdit, (state) => ({
+    ...state,
+    editedIngredientIndex: -1,
+    editedIngredient: null,
+  }))
+);
+
+export function shoppingListReducer(state: State, action: Action) {
+  return _shoppingListReducer(state, action);
 }

@@ -4,7 +4,7 @@ import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Store } from '@ngrx/store';
 import { map, Subscription } from 'rxjs';
 import { AppState } from 'src/app/store/app.reducer';
-import { AddRecipe, UpdateRecipe } from '../store/recipe.actions';
+import { updateRecipe, addRecipe } from '../store/recipe.actions';
 
 @Component({
   selector: 'app-recipe-edit',
@@ -35,10 +35,10 @@ export class RecipeEditComponent implements OnInit, OnDestroy {
   onSubmit() {
     if (this.editMode) {
       this.store.dispatch(
-        new UpdateRecipe({ index: this.id, recipe: this.recipeForm.value })
+        updateRecipe({ index: this.id, recipe: this.recipeForm.value })
       );
     } else {
-      this.store.dispatch(new AddRecipe(this.recipeForm.value));
+      this.store.dispatch(addRecipe(this.recipeForm.value));
     }
     this.onCancel();
   }

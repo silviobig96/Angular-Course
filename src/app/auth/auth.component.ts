@@ -11,7 +11,7 @@ import { Subscription } from 'rxjs';
 import { AlertComponent } from '../shared/alert/alert.component';
 import { PlaceHolderDirective } from '../shared/placeHolder/place-holder.directive';
 import { AppState } from '../store/app.reducer';
-import { ClearError, LoginStart, SignupStart } from './store/auth.actions';
+import { clearError, loginStart, signupStart } from './store/auth.actions';
 
 @Component({
   selector: 'app-auth',
@@ -56,31 +56,16 @@ export class AuthComponent implements OnInit, OnDestroy {
     const password = this.signupForm.value.password;
 
     if (this.isLoginMode) {
-      // authObs = this.authService.login(email, password);
-      this.store.dispatch(new LoginStart({ email, password }));
+      this.store.dispatch(loginStart({ email, password }));
     } else {
-      this.store.dispatch(new SignupStart({ email, password }));
+      this.store.dispatch(signupStart({ email, password }));
     }
-
-    // authObs.subscribe({
-    //   next: (responseData) => {
-    //     console.log(responseData);
-    //     this.isLoading = false;
-    //     this.router.navigate(['/recipes']);
-    //   },
-    //   error: (errorMessage) => {
-    //     console.log(errorMessage);
-    //     this.error = errorMessage;
-    //     this.showErrorAlert(errorMessage);
-    //     this.isLoading = false;
-    //   },
-    // });
 
     this.signupForm.reset();
   }
 
   onHandleError() {
-    this.store.dispatch(new ClearError());
+    this.store.dispatch(clearError());
   }
 
   private initForm() {

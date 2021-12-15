@@ -1,8 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { map, Subscription } from 'rxjs';
-import { Logout } from '../auth/store/auth.actions';
-import { FetchRecipes, StoreRecipes } from '../recipes/store/recipe.actions';
+import { logout } from '../auth/store/auth.actions';
+import { storeRecipes, fetchRecipes } from '../recipes/store/recipe.actions';
 import { AppState } from '../store/app.reducer';
 
 @Component({
@@ -26,15 +26,15 @@ export class HeaderComponent implements OnInit, OnDestroy {
   }
 
   onSaveData() {
-    this.store.dispatch(new StoreRecipes());
+    this.store.dispatch(storeRecipes());
   }
 
   onFectchData() {
-    this.store.dispatch(new FetchRecipes());
+    this.store.dispatch(fetchRecipes());
   }
 
   onLogout() {
-    this.store.dispatch(new Logout());
+    this.store.dispatch(logout());
   }
 
   ngOnDestroy(): void {
